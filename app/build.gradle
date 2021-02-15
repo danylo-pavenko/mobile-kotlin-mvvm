@@ -1,0 +1,92 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'
+    id 'com.google.firebase.crashlytics'
+    id 'koin'
+}
+
+android {
+    compileSdkVersion build_versions.compile_sdk
+    buildToolsVersion build_versions.build_tools
+
+    defaultConfig {
+        applicationId "com.dansdev.kotlinmvvm"
+        minSdkVersion build_versions.min_sdk
+        targetSdkVersion build_versions.target_sdk
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def formattedDate = new Date().format('yy.MM.dd-HH.mm')
+
+            def fileName = "com.dansdev_${defaultConfig.versionName}" +
+                    "_[${variant.buildType.name}]".toUpperCase() +
+                    "_${formattedDate}" +
+                    ".apk"
+            outputFileName = fileName
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation deps.kotlin.stdlib
+    implementation deps.app_compat
+    implementation deps.material
+    implementation deps.core_ktx
+    implementation deps.constraint_layout
+    implementation deps.arch_core.runtime
+    implementation deps.coroutines.android
+    implementation deps.fragment.testing
+    implementation deps.timber
+    implementation deps.k4kotlin
+    implementation deps.recyclerview
+    implementation deps.app_secure.crypto
+
+    / Lifecycle /
+    implementation deps.lifecycle.livedata_ktx
+    implementation deps.lifecycle.runtime
+    implementation deps.lifecycle.java8
+    kapt deps.lifecycle.compiler
+
+    / Navigation /
+    implementation deps.navigation.runtime_ktx
+    implementation deps.navigation.fragment_ktx
+    implementation deps.navigation.ui_ktx
+
+    / DI /
+    implementation deps.koin.android
+    implementation deps.koin.scope
+    implementation deps.koin.view_model
+    implementation deps.koin.fragment
+
+    / Android Testing Support Library's runner and rules /
+    androidTestImplementation deps.atsl.core
+    androidTestImplementation deps.atsl.ext_junit
+    androidTestImplementation deps.atsl.runner
+    androidTestImplementation deps.atsl.rules
+    androidTestImplementation deps.arch_core.testing
+}
